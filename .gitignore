@@ -1,3 +1,9 @@
+# Deps
+Docker/deps/
+
+# Environment files
+*.env
+
 # Prerequisites
 *.d
 
@@ -39,3 +45,8 @@
 
 # debug information files
 *.dwo
+
+
+#Python pycache folders
+__pycache__/
+*.pyc

@@ -1,0 +1,32 @@
+{
+    "name": "dev-base",
+    "dockerComposeFile": "../../dev-docker-compose.yaml",
+    "service": "dev-base",
+    "remoteUser": "btdev",
+    "workspaceFolder": "/roscon25_ws",
+    "shutdownAction": "stopCompose",
+    "overrideCommand": false,
+    // "postStartCommand": "bash -c \"echo ciao\"",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.fontSize": 14,
+        "editor.formatOnSave": false,
+        "workbench.colorTheme": "Default Dark+",
+        "workbench.iconTheme": "material-icon-theme",
+        "editor.tokenColorCustomizations": {
+            "comments": "#616060",
+            "variables": "#fa2359",
+            "types": "#cc00ff",
+            "keywords": "#eeff00",
+            "numbers": "#da5000",
+        },
+        "C_Cpp.clang_format_style": "file",
+        "C_Cpp.default.cStandard": "c11"
+    },
+    "extensions": [
+		"ms-python.python",
+		"ms-vscode.cpptools",
+		"redhat.vscode-yaml",
+		"vscode-icons-team.vscode-icons"
+	]
+}
