@@ -1,0 +1,21 @@
+repositories:
+  pyrobosim:
+    type: git
+    url: https://github.com/sea-bass/pyrobosim.git
+    version: 4.3.0
+  rosx_introspection:
+    type: git
+    url: https://github.com/Eurecat/rosx_introspection.git
+    version: master  # Adjust if needed
+  BehaviorTree.CPP:
+    type: git
+    url: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+    version: 4.6.2
+  behaviortree_eut_plugins:
+    type: git
+    url: https://github.com/Eurecat/behaviortree_eut_plugins.git
+    version: jazzy
+  BehaviorTree.ROS2:
+    type: git
+    url: https://github.com/Eurecat/BehaviorTree.ROS2.git
+    version: jazzy

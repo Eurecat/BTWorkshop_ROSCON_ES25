@@ -32,6 +32,11 @@ WORKDIR /roscon25_ws/src
 # RUN /bin/bash -c "source /opt/ros_python_env/bin/activate && uv pip install --no-cache -r /tmp/requirements.txt"
 # RUN uv pip install --system --no-cache --break-system-packages -r requirements.txt
 
+COPY deps/BehaviorTree.CPP /roscon25_ws/src/deps/BehaviorTree.CPP
+COPY deps/behaviortree_eut_plugins /roscon25_ws/src/deps/behaviortree_eut_plugins
+COPY deps/rosx_introspection /roscon25_ws/src/deps/rosx_introspection
+COPY deps/BehaviorTree.ROS2 /roscon25_ws/src/deps/BehaviorTree.ROS2
+
 # ------------------------------------------------------------
 # Setup rosdep
 # (init system-wide, update for this user)

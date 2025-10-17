@@ -67,7 +67,7 @@ done
 
 # Import/update repository using VCS tools
 echo "Importing repository using VCS..."
-vcs import ${DEPS_DIR} < pyrobosim.repos
+vcs import ${DEPS_DIR} < deps.repos
 vcs pull ${DEPS_DIR}
 
 # Build base image of the sim in its last release

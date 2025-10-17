@@ -1,5 +1,0 @@
-repositories:
-  pyrobosim:
-    type: git
-    url: https://github.com/sea-bass/pyrobosim.git
-    version: 4.3.0
