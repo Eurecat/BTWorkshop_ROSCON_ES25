@@ -1,0 +1,11 @@
+string room1
+string room2
+
+---
+
+bool success
+string message
+
+---
+
+# No Feedback

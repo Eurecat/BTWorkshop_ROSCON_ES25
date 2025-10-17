@@ -1,0 +1,5 @@
+string room1
+string room2
+---
+bool door_open
+string message

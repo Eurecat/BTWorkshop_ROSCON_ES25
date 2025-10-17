@@ -1,0 +1,5 @@
+float64 battery_level
+bool executing_action
+bool holding_object
+string manipulated_object
+string last_visited_location

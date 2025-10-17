@@ -1,0 +1,10 @@
+string target_room
+
+---
+
+bool success
+string message
+
+---
+
+# No Feedback
