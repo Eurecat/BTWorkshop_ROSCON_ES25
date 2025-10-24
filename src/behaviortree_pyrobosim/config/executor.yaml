@@ -1,0 +1,17 @@
+pyrobosim_bt_action_server:
+  ros__parameters:
+    action_name: "pyrobosim_bt_action_server" # Optional (defaults to `bt_action_server`)
+    tick_frequency: 100 # Optional (defaults to 100 Hz)
+    use_groot2: true # Optional (defaults to false and to a revised ZMQPublisher for a possible implementation of groot compatible with BT.CPP4.x)
+    groot2_port: 5555 # Optional (defaults to 5555)
+    # zmq_pub_port: 1666 # Optional: old zmq publisher revised for BT4.x
+    # zmq_srv_port: 1667 # Optional: old zmq publisher revised for BT4.x
+    ros_plugins_timeout: 10000  # Optional (seconds)
+
+    plugins:
+      - behaviortree_pyrobosim/bt_plugins
+      - behaviortree_ros2/bt_plugins
+
+    behavior_trees:
+      - behaviortree_pyrobosim/behavior_trees
+      

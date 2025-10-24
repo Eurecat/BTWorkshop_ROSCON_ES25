@@ -1,0 +1,1 @@
+float64 battery_level

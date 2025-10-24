@@ -29,7 +29,6 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}  
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
-      - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
       - .vscode/:/roscon25_ws/.vscode/:rw
       - ../worlds/:/roscon25_ws/worlds/:rw
@@ -37,4 +36,4 @@ services:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
-    command: sleep infinity
+    command:  bash -c "source /roscon25_ws/install/setup.bash && colcon build --symlink-install --event-handlers console_direct+; sleep infinity"

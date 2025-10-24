@@ -1,0 +1,5 @@
+<description>
+    <plugins name="behaviortree_pyrobosim"
+	    folder_path="bt_plugins"
+	    description="Behavior Tree plugins for PyRobosim" />
+</description>

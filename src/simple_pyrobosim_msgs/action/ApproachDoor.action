@@ -2,8 +2,7 @@ string room1
 string room2
 
 ---
-
-bool success
+#Result
 string message
 
 ---

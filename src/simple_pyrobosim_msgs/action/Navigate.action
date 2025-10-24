@@ -1,8 +1,7 @@
 string target_room
 
 ---
-
-bool success
+#Result
 string message
 
 ---

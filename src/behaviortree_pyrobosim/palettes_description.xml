@@ -1,0 +1,8 @@
+<description>
+    <palettes name="pyrobosim_palette"
+	    folder_path="bt_palettes"
+	    description="Behavior Tree Palettes to interface with PyRobosim"  />
+	<palettes name="pyrobosim_nodemodels"
+	    folder_path="bt_plugins"
+	    description="Behavior Tree NodeModels for PyRobosim" />
+</description>

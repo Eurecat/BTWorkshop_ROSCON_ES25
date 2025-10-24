@@ -2,7 +2,7 @@
 #include "behaviortree_cpp/bt_factory.h"
 #include <behaviortree_ros2/behaviortree_ros2.hpp>
 
-#include "simple_pyrobosim_msgs/msg/simple_robot_state.hpp"
+#include "simple_pyrobosim_msgs/msg/simple_robot_battery.hpp"
 
 #include "simple_pyrobosim_msgs/srv/is_door_open.hpp"
 
@@ -21,7 +21,7 @@ using namespace BT;
 BT_REGISTER_ROS_NODES(factory, params)
 {
     // Subscribers
-    factory.registerNodeType<AutoSerSubscriber<simple_pyrobosim_msgs::msg::SimpleRobotState>>("UpdateRobotState",params);
+    factory.registerNodeType<AutoSerSubscriber<simple_pyrobosim_msgs::msg::SimpleRobotBattery>>("UpdateRobotBattery",params);
 
     // Service clients
     factory.registerNodeType<AutoDesAutoSerServiceClient<simple_pyrobosim_msgs::srv::IsDoorOpen>>("IsDoorOpen",params);

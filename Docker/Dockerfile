@@ -21,6 +21,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     terminator \
     gosu  \
+    wget \
     # ros-${ROS_DISTRO}-usb-cam \
     && rm -rf /var/lib/apt/lists/*
 
@@ -43,6 +44,9 @@ COPY deps/BehaviorTree.ROS2 /roscon25_ws/src/deps/BehaviorTree.ROS2
 # ------------------------------------------------------------
 
 WORKDIR /roscon25_ws
+
+RUN wget https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.6.1-linux-installer.run
+
 # Optional: fix rosdep init issue gracefully
 RUN [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ] /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash;source /pyrobosim_ws/install/setup.bash;sudo rosdep init" || echo "rosdep already initialized"
 RUN apt-get update && \ 

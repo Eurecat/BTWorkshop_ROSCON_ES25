@@ -13,7 +13,7 @@ from rclpy.action import CancelResponse, GoalResponse
 from rclpy.action.server import ServerGoalHandle, GoalStatus
 
 from pyrobosim_msgs.msg import RobotState, TaskAction
-from simple_pyrobosim_msgs.msg import SimpleRobotState
+from simple_pyrobosim_msgs.msg import SimpleRobotState, SimpleRobotBattery
 
 from pyrobosim_msgs.srv import RequestWorldState
 from simple_pyrobosim_msgs.srv import IsDoorOpen
@@ -99,7 +99,7 @@ class PyRobosimBridgePrivate(Node):
         goal_msg = ExecuteTaskAction.Goal()
         goal_msg.action = task_action  # task_action should be a TaskAction message
         
-        self.get_logger().info(f'Sending goal: {goal_msg}')
+        self.get_logger().info(f'\nSending goal: {goal_msg}')
         future = self._exec_action_client.send_goal_async(goal_msg)
         return future
     
@@ -137,7 +137,8 @@ class PyRobosimBridgePrivate(Node):
             success = status == GoalStatus.STATUS_SUCCEEDED and actual_result.execution_result.status == ExecutionResult.SUCCESS
             return success, actual_result.execution_result.message
         elif cancel_event.is_set():
-            goal_handle.cancel_goal_async()
+            # self.get_logger().info(f"Cancelling action {task_action}")
+            goal_handle.cancel_goal()
             return False, 'Cancelled' 
         else:
             return False, 'Result timeout'
@@ -159,12 +160,14 @@ class PyRobosimBridgePublic(Node):
         self._private_node = private_node  # reference to the private node object in other context
         self._stop_event = stop_event
         self._cancel_event = threading.Event()
+        self._processed_task_sync_event = threading.Event()
 
         self._curr_robot_status: None | RobotState = None
         self._curr_room = ''
 
         # Public publisher that external world can subscribe to
         self._simple_robot_state_pub = self.create_publisher(SimpleRobotState, '/robot/robot_state', 10)
+        self._simple_robot_battery_pub = self.create_publisher(SimpleRobotBattery, '/robot/battery', 10)
 
         # Public service server that external world can call
         self._is_door_open_srv_server = self.create_service(IsDoorOpen, '/is_door_open', self._handle_is_door_open_service)
@@ -206,6 +209,7 @@ class PyRobosimBridgePublic(Node):
                     self._curr_room = self._curr_robot_status.last_visited_location
                 
                 self._simple_robot_state_pub.publish(msg)
+                self._simple_robot_battery_pub.publish(SimpleRobotBattery(battery_level=msg.battery_level))
             except queue.Empty:
                 pass
             
@@ -232,17 +236,25 @@ class PyRobosimBridgePublic(Node):
         return response
     
     def _process_execute_task_action(self, goal_handle : ServerGoalHandle, task_action: TaskAction, result):
+        if self._curr_robot_status and self._curr_robot_status.executing_action:
+            time.sleep(0.5)
+        
         self._cancel_event = threading.Event()
-        result.success, result.message = self._private_node.execute_task_sync(task_action, cancel_event=self._cancel_event)
+        self._processed_task_sync_event = threading.Event()
+        success, result.message = self._private_node.execute_task_sync(task_action, cancel_event=self._cancel_event)
+        self._processed_task_sync_event.set()
         
         if goal_handle.is_active:
-            goal_handle.succeed() if result.success else goal_handle.abort()
+            goal_handle.succeed() if success else goal_handle.abort()
         
         return result
     
     def _cancel_callback(self, goal_handle: ServerGoalHandle):
         if goal_handle.is_active:
             self._cancel_event.set()
+            self.get_logger().warn(f"Requested to cancel active action with goal id {goal_handle.goal_id} with request {goal_handle.request}")
+            self._processed_task_sync_event.wait()
+            self.get_logger().warn(f"Cancelled active action with goal id {goal_handle.goal_id} with request {goal_handle.request}")
             return CancelResponse.ACCEPT
         return CancelResponse.REJECT
     
@@ -253,10 +265,12 @@ class PyRobosimBridgePublic(Node):
         curr_world, message = self._private_node.request_world_status(wait_timeout=2.0)
         if curr_world is None:
             goal_handle.abort()
+            self.get_logger().error('Internal error: not possible to process navigate action exec')
             return Navigate.Result(success=False, message='Internal error')
 
         if not valid_room(curr_world.state.hallways, request.target_room):    
             goal_handle.abort()
+            self.get_logger().error('Internal error: not possible to process navigate action exec (target is not valid)')
             return Navigate.Result(success=False, message='Target is not a valid room')
 
         # Create TaskAction message properly
@@ -286,6 +300,7 @@ class PyRobosimBridgePublic(Node):
         
         if not approach_ok:
             goal_handle.abort()
+            self.get_logger().error('Internal error: not possible to process approach object action exec (preconditions are not met)')
             return ApproachObject.Result(success=False, message=str(f"Object {request.object} to approach is not present in this room"))
 
         # Create TaskAction message properly
@@ -331,6 +346,7 @@ class PyRobosimBridgePublic(Node):
             return self._process_execute_task_action(goal_handle, task_action, Place.Result())
         else:
             goal_handle.abort()
+            self.get_logger().error('Internal error: not possible to process place action execution (preconditions are not met)')
             return Place.Result(success=False, message=str(f"Robot is not currently holding {request.object}"))
 
     def _execute_open_callback(self, goal_handle : ServerGoalHandle):
@@ -340,6 +356,7 @@ class PyRobosimBridgePublic(Node):
         curr_world, message = self._private_node.request_world_status(wait_timeout=2.0)
         if curr_world is None:
             goal_handle.abort()
+            self.get_logger().error('Internal error: not possible to process open action exec')
             return Open.Result(success=False, message='Internal error')
 
         # Create TaskAction message properly
@@ -429,11 +446,11 @@ def main():
     public_thread.start()
 
     try:
-        print("Bridge running. Press Ctrl-C to exit.")
+        public_node.get_logger().info("Bridge running. Press Ctrl-C to exit.")
         while True:
             time.sleep(0.5)  # main thread can watch health, metrics, or react to signals
     except KeyboardInterrupt:
-        print("Shutting down bridge...")
+        public_node.get_logger().info("Shutting down bridge...")
     finally:
         stop_event.set()
         public_node.graceful_shutdown()

@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="behaviortree_pyrobosim" name="pyrobosim_bt_action_server" exec="bt_executor" output="screen">
+    <param from="$(find-pkg-share behaviortree_pyrobosim)/config/executor.yaml"/>
+  </node>
+</launch>
