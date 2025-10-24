@@ -38,4 +38,4 @@ services:
     command: sleep infinity
   demo_ros:
     extends: base
-    command: bash -c "source /pyrobosim_ws/install/setup.bash && ros2 launch pyrobosim_ros demo.launch.py world_file:=/roscon25_ws/worlds/world1.yaml"
+    command: bash -c "source /pyrobosim_ws/install/setup.bash && ros2 launch simple_pyrobosim_ros demo.launch.py world_file:=/roscon25_ws/worlds/world1.yaml"
