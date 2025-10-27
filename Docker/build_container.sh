@@ -20,7 +20,7 @@ if [ ! -f "$ENV_FILE" ]; then
 fi
 
 DEFAULT_USERNAME="btdev"
-DEFAULT_ROS_DOMAIN_ID="1"
+DEFAULT_ROS_DOMAIN_ID="12"
 CURRENT_USER_ID=$(id -u)
 CURRENT_GROUP_ID=$(id -g)
 
