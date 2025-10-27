@@ -65,33 +65,32 @@ for arg in "$@"; do
     fi
 done
 
-# Import/update repository using VCS tools
-echo "Importing repository using VCS..."
-vcs import ${DEPS_DIR} < deps.repos
-vcs pull ${DEPS_DIR}
-
-# Build base image of the sim in its last release
-cd deps/pyrobosim && docker compose build && cd -
-
-BASE_IMAGE="pyrobosim_ros:${ROS_DISTRO}"
-IMAGE_NAME="bt_roscon_es_25:${ROS_DISTRO}"
-
-echo "Base image: ${BASE_IMAGE}"
-echo "Output image: ${IMAGE_NAME}"
+IMAGE_NAME="deviseut/btroscon_es:${ROS_DISTRO}"
 
 
 if $REBUILD; then
-    echo "Rebuilding the application Docker image with no cache..."
+    # Import/update repository using VCS tools
+    echo "Importing repository using VCS..."
+    vcs import ${DEPS_DIR} < deps.repos
+    vcs pull ${DEPS_DIR}
+
+    # Build base image of the sim in its last release
+    cd deps/pyrobosim && docker compose build && cd -
+    BASE_IMAGE="pyrobosim_ros:${ROS_DISTRO}"
+    echo "Rebuilding the Docker image with no cache..."
+    echo "Base image: ${BASE_IMAGE}"
+    echo "Output image: ${IMAGE_NAME}"
     docker build --no-cache . --build-arg BASE_IMAGE="${BASE_IMAGE}" -t ${IMAGE_NAME} -f Dockerfile
 else
-    docker build . --build-arg BASE_IMAGE="${BASE_IMAGE}" -t ${IMAGE_NAME} -f Dockerfile
+    echo "Pulling Docker image..."
+    docker pull ${IMAGE_NAME}
 fi
 
 # Set or Update BUILT_IMAGE 
 if grep -q -E "^BUILT_IMAGE=" "$ENV_FILE"; then
-    sed -i "s/^BUILT_IMAGE=.*/BUILT_IMAGE=$IMAGE_NAME/" "$ENV_FILE"
+    sed -i "s#^BUILT_IMAGE=.*#BUILT_IMAGE=$IMAGE_NAME#" "$ENV_FILE"
 else
     echo "BUILT_IMAGE=$IMAGE_NAME" >> "$ENV_FILE"
 fi
 
-echo "Application Docker image ${IMAGE_NAME} built successfully!"
+echo "Docker image ${IMAGE_NAME} built successfully!"

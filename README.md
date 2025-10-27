@@ -1,6 +1,6 @@
 # BTWorkshop_ROSCON_ES25
 
-BT4.x, Groot2, BTROS2 y BTForest: orquestación avanzada en ROS2
+BT4.x, Groot2, BTROS2: orquestación avanzada en ROS2
 
 This repository contains BT.CPP assets to set up the simulation environment and tools stack for the workshop on advanced orchestration in ROS2, integrating BT.CPP 4.x, Groot2, BT.ROS2 for robotics behavior modular and composable orchestration.
 
@@ -30,9 +30,10 @@ cd Docker
 
 #### Build Options
 
-- `--clean-rebuild`: Force a complete rebuild of the container, removing cached layers
-- No arguments: Build with existing dependencies
+- **[Option A]** No arguments: Pull image from [dockerhub](https://hub.docker.com/r/deviseut/btroscon_es) (suggested!!!)
+- **[Option B]** `--clean-rebuild`: Force a complete rebuild of the container, removing cached layers
 
+With **[Option B]**
 The build process will:
 1. **Base Image**: Use the latest `pyrobosim_ros:${ROS_DISTRO}` as the foundation
 2. **Dependency Management**: Import and update dependencies in `deps/` using VCS
@@ -139,6 +140,7 @@ chmod +x Groot2-v1.6.1-linux-installer.run && ./Groot2-v1.6.1-linux-installer.ru
 # Follow gui installation and then create an alias (suggested, not mandatory)
 alias groot2=<groot2-bin-exec-path> # default might be "/home/btdev/Groot2/bin/groot2"
 ```
+_Note that if you build the image manually and did not pull it from dockerhub you need to install groot2 on your own._
 
 ### 2. Launch BTROS2 Executor and trigger a tree execution
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="BT0.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="ApproachObject">
+            <output_port name="goal_state" type="std::string">Goal Error State</output_port>
+            <output_port name="result_message" type="std::string">Auto-generated field from simple_pyrobosim_msgs::action::ApproachObject_Result_&lt;std::allocator&lt;void&gt; &gt;</output_port>
+            <input_port name="object" type="std::string">Auto-generated field from simple_pyrobosim_msgs::action::ApproachObject_Goal_&lt;std::allocator&lt;void&gt; &gt;</input_port>
+            <input_port name="action_name" type="std::string">Action server name</input_port>
+        </Action>
+        <Action ID="Navigate">
+            <output_port name="goal_state" type="std::string">Goal Error State</output_port>
+            <output_port name="result_message" type="std::string">Auto-generated field from simple_pyrobosim_msgs::action::Navigate_Result_&lt;std::allocator&lt;void&gt; &gt;</output_port>
+            <input_port name="target_room" type="std::string">Auto-generated field from simple_pyrobosim_msgs::action::Navigate_Goal_&lt;std::allocator&lt;void&gt; &gt;</input_port>
+            <input_port name="action_name" type="std::string">Action server name</input_port>
+        </Action>
+    </TreeNodesModel>
+</root>
