@@ -129,18 +129,23 @@ ros2 launch simple_pyrobosim_ros demo.launch.py world_file:=/roscon25_ws/worlds/
 - /roscon25_ws/worlds/world4.yaml for Exercise 4 
 
 
-To start Groot2:
-
+To install Groot2 (it is a simple GUI installation):
 ```bash
-groot2
-```
-If it does not launch, reinstall it through:
-```bash
+cd /roscon25_ws
 chmod +x Groot2-v1.6.1-linux-installer.run && ./Groot2-v1.6.1-linux-installer.run
-# Follow gui installation and then create an alias (suggested, not mandatory)
-alias groot2=<groot2-bin-exec-path> # default might be "/home/btdev/Groot2/bin/groot2"
 ```
-_Note that if you build the image manually and did not pull it from dockerhub you need to install groot2 on your own._
+Follow gui installation and then create an alias (suggested, not mandatory).
+You can put the alias directly in the .bashrc to easily start it from a new terminal.
+```bash
+# default <groot2-bin-exec-path> might be "/home/btdev/Groot2/bin/groot2"
+alias groot2=<groot2-bin-exec-path> 
+groot2 #should start groot2
+
+# to "save" the alias in the user bash session
+echo "alias groot2=/home/btdev/Groot2/bin/groot2" >> /home/btdev/.bashrc 
+source /home/btdev/.bashrc
+groot2 #should start groot2
+```
 
 ### 2. Launch BTROS2 Executor and trigger a tree execution
 
