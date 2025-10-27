@@ -164,3 +164,8 @@ Please note that the simulator must be started, otherwise the tree will take mor
 
 Pro tip:
 You can open groot2 in monitor and check out the tree execution real-time by clicking on "Connect".
+
+
+
+# Acknowledgements
+We thank [Sebastian Castro](https://github.com/sea-bass) for the amazing work on [pyrobosim](https://pyrobosim.readthedocs.io/en/latest/) that we extensively have taken leverage of to prepare the material for this workshop.
