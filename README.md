@@ -149,6 +149,8 @@ groot2 #should start groot2
 
 ### 2. Launch BTROS2 Executor and trigger a tree execution
 
+**_Having launched already the simulator (step 1)..._**
+
 Start BTROS2 Executor through:
 ```bash
 ros2 launch behaviortree_pyrobosim executor.launch.xml
@@ -162,10 +164,17 @@ ros2 action send_goal /pyrobosim_bt_action_server btcpp_ros2_interfaces/action/E
 You can replace `<your-tree-name>` with `Exercise0` to test it out.
 Please note that the simulator must be started, otherwise the tree will take more time to load (ros2 srv and action will not be found and clients in the tree will timed out).
 
+If you start:
+- Simulator
+- BTExecutor
+- (optional) groot
+
+and you launch the sample tree execution (with `Exercise0` tree for instance), the result should look as in the image below.
+
+![Exercise0 demo](images/sample_launch.png)
+
 Pro tip:
 You can open groot2 in monitor and check out the tree execution real-time by clicking on "Connect".
-
-
 
 # Acknowledgements
 We thank [Sebastian Castro](https://github.com/sea-bass) for the amazing work on [pyrobosim](https://pyrobosim.readthedocs.io/en/latest/) that we extensively have taken leverage of to prepare the material for this workshop.
