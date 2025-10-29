@@ -12,7 +12,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/SimpleRobotState.msg"
     "srv/IsDoorOpen.srv"
     "action/ApproachDoor.action"
-    "action/ApproachObject.action"
+    "action/ApproachFurniture.action"
     "action/Navigate.action"
     "action/Open.action"
     "action/Pick.action"

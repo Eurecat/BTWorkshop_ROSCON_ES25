@@ -1,8 +1,7 @@
 string object
 
 ---
-#Result
-string message
+#No Result (action abort if failure)
 
 ---
 

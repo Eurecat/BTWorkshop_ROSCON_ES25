@@ -2,8 +2,7 @@ string room1
 string room2
 
 ---
-#Result
-string message
+#No Result (action abort if failure)
 
 ---
 

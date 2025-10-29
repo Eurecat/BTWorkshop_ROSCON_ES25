@@ -2,14 +2,10 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="Exercise0">
     <Sequence>
-      <Navigate goal_state="{nav_state}"
-                result_message="{nav_result_msg}"
-                target_room="kitchen"
+      <Navigate target_room="kitchen"
                 action_name="/robot/navigate"/>
-      <ApproachObject goal_state="{approach_state}"
-                      result_message="{approach_result_msg}"
-                      object="pantry"
-                      action_name="/robot/approach_object"/>
+      <ApproachFurniture object="pantry"
+                      action_name="/robot/approach_furniture"/>
     </Sequence>
   </BehaviorTree>
 

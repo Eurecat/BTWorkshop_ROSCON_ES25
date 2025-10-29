@@ -1,8 +1,7 @@
 string target_room
 
 ---
-#Result
-string message
+#No Result (action abort if failure)
 
 ---
 

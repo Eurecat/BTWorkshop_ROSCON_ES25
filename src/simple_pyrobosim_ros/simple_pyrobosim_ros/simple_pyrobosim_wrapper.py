@@ -20,7 +20,7 @@ from simple_pyrobosim_msgs.srv import IsDoorOpen
 
 from pyrobosim_msgs.msg import ExecutionResult
 from pyrobosim_msgs.action import ExecuteTaskAction
-from simple_pyrobosim_msgs.action import Navigate, Pick, Place, ApproachObject, ApproachDoor, Open
+from simple_pyrobosim_msgs.action import Navigate, Pick, Place, ApproachFurniture, ApproachDoor, Open
 from rclpy.action.client import ClientGoalHandle
 
 # Configuration
@@ -170,10 +170,10 @@ class PyRobosimBridgePublic(Node):
         self._simple_robot_battery_pub = self.create_publisher(SimpleRobotBattery, '/robot/battery', 10)
 
         # Public service server that external world can call
-        self._is_door_open_srv_server = self.create_service(IsDoorOpen, '/is_door_open', self._handle_is_door_open_service)
+        self._is_door_open_srv_server = self.create_service(IsDoorOpen, '/is_passage_door_open', self._handle_is_door_open_service)
 
         self._action_server_navigate = ActionServer(self, Navigate, '/robot/navigate', execute_callback=self._execute_navigate_callback, cancel_callback=self._cancel_callback)
-        self._action_server_approach_obj = ActionServer(self, ApproachObject, '/robot/approach_object', execute_callback=self._execute_approach_obj_callback, cancel_callback=self._cancel_callback)
+        self._action_server_approach_obj = ActionServer(self, ApproachFurniture, '/robot/approach_furniture', execute_callback=self._execute_approach_furniture_callback, cancel_callback=self._cancel_callback)
         self._action_server_approach_hall = ActionServer(self, ApproachDoor, '/robot/approach_door', execute_callback=self._execute_approach_door_callback, cancel_callback=self._cancel_callback)
 
         self._action_server_pick = ActionServer(self, Pick, '/robot/pick', execute_callback=self._execute_pick_callback, cancel_callback=self._cancel_callback)
@@ -241,7 +241,8 @@ class PyRobosimBridgePublic(Node):
         
         self._cancel_event = threading.Event()
         self._processed_task_sync_event = threading.Event()
-        success, result.message = self._private_node.execute_task_sync(task_action, cancel_event=self._cancel_event)
+        success, message = self._private_node.execute_task_sync(task_action, cancel_event=self._cancel_event)
+        self.get_logger().debug(f"Task action execution completed: success={success}, message='{message}'")
         self._processed_task_sync_event.set()
         
         if goal_handle.is_active:
@@ -266,12 +267,14 @@ class PyRobosimBridgePublic(Node):
         if curr_world is None:
             goal_handle.abort()
             self.get_logger().error('Internal error: not possible to process navigate action exec')
-            return Navigate.Result(success=False, message='Internal error')
+            # return Navigate.Result(success=False, message='Internal error')
+            return Navigate.Result()
 
         if not valid_room(curr_world.state.hallways, request.target_room):    
             goal_handle.abort()
             self.get_logger().error('Internal error: not possible to process navigate action exec (target is not valid)')
-            return Navigate.Result(success=False, message='Target is not a valid room')
+            # return Navigate.Result(success=False, message='Target is not a valid room')
+            return Navigate.Result()
 
         # Create TaskAction message properly
         task_action = TaskAction()
@@ -281,14 +284,15 @@ class PyRobosimBridgePublic(Node):
         
         return self._process_execute_task_action(goal_handle, task_action, Navigate.Result())
 
-    def _execute_approach_obj_callback(self, goal_handle : ServerGoalHandle):
-        request: ApproachObject.Goal = goal_handle.request
+    def _execute_approach_furniture_callback(self, goal_handle : ServerGoalHandle):
+        request: ApproachFurniture.Goal = goal_handle.request
         
         # Use the private node's synchronous helper that internally spins its context
         curr_world, message = self._private_node.request_world_status(wait_timeout=2.0)
         if curr_world is None:
             goal_handle.abort()
-            return ApproachObject.Result(success=False, message='Internal error')
+            # return ApproachFurniture.Result(success=False, message='Internal error')
+            return ApproachFurniture.Result()
         
         # Check that approachable object is in the same room in which we are located
         curr_location = self._curr_room
@@ -301,7 +305,8 @@ class PyRobosimBridgePublic(Node):
         if not approach_ok:
             goal_handle.abort()
             self.get_logger().error('Internal error: not possible to process approach object action exec (preconditions are not met)')
-            return ApproachObject.Result(success=False, message=str(f"Object {request.object} to approach is not present in this room"))
+            # return ApproachFurniture.Result(success=False, message=str(f"Object {request.object} to approach is not present in this room"))
+            return ApproachFurniture.Result()
 
         # Create TaskAction message properly
         task_action = TaskAction()
@@ -309,7 +314,7 @@ class PyRobosimBridgePublic(Node):
         task_action.type = 'navigate'
         task_action.target_location = request.object
         
-        return self._process_execute_task_action(goal_handle, task_action, ApproachObject.Result())
+        return self._process_execute_task_action(goal_handle, task_action, ApproachFurniture.Result())
     
     def _execute_approach_door_callback(self, goal_handle : ServerGoalHandle):
         request: ApproachDoor.Goal = goal_handle.request
@@ -347,7 +352,8 @@ class PyRobosimBridgePublic(Node):
         else:
             goal_handle.abort()
             self.get_logger().error('Internal error: not possible to process place action execution (preconditions are not met)')
-            return Place.Result(success=False, message=str(f"Robot is not currently holding {request.object}"))
+            # return Place.Result(success=False, message=str(f"Robot is not currently holding {request.object}"))
+            return Place.Result()
 
     def _execute_open_callback(self, goal_handle : ServerGoalHandle):
         request: Open.Goal = goal_handle.request
@@ -357,7 +363,8 @@ class PyRobosimBridgePublic(Node):
         if curr_world is None:
             goal_handle.abort()
             self.get_logger().error('Internal error: not possible to process open action exec')
-            return Open.Result(success=False, message='Internal error')
+            # return Open.Result(success=False, message='Internal error')
+            return Open.Result()
 
         # Create TaskAction message properly
         task_action = TaskAction()

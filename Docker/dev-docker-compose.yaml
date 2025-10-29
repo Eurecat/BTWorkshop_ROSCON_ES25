@@ -26,7 +26,7 @@ services:
       - GROUP_ID=${GROUP_ID}
       - USERNAME=${USERNAME}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}  
-      # - ROS_LOCALHOST_ONLY=1 # avoid conflicts with other containers in the same network
+      - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST # avoid conflicts with other containers in the same network
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
     volumes:
