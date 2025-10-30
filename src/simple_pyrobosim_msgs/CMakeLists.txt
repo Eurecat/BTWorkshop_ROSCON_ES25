@@ -10,7 +10,8 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/SimpleRobotBattery.msg"
     "msg/SimpleRobotState.msg"
-    "srv/IsDoorOpen.srv"
+    "srv/IsFurnitureOpen.srv"
+    "srv/IsPassageDoorOpen.srv"
     "action/ApproachDoor.action"
     "action/ApproachFurniture.action"
     "action/Navigate.action"

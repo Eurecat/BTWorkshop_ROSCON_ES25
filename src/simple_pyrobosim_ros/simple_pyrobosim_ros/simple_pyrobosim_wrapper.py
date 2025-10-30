@@ -16,7 +16,7 @@ from pyrobosim_msgs.msg import RobotState, TaskAction
 from simple_pyrobosim_msgs.msg import SimpleRobotState, SimpleRobotBattery
 
 from pyrobosim_msgs.srv import RequestWorldState
-from simple_pyrobosim_msgs.srv import IsDoorOpen
+from simple_pyrobosim_msgs.srv import IsPassageDoorOpen, IsFurnitureOpen
 
 from pyrobosim_msgs.msg import ExecutionResult
 from pyrobosim_msgs.action import ExecuteTaskAction
@@ -170,7 +170,8 @@ class PyRobosimBridgePublic(Node):
         self._simple_robot_battery_pub = self.create_publisher(SimpleRobotBattery, '/robot/battery', 10)
 
         # Public service server that external world can call
-        self._is_door_open_srv_server = self.create_service(IsDoorOpen, '/is_passage_door_open', self._handle_is_door_open_service)
+        self._is_passage_door_open_srv_server = self.create_service(IsPassageDoorOpen, '/is_passage_door_open', self._handle_is_passage_door_open_service)
+        self._is_furniture_door_open_srv_server = self.create_service(IsFurnitureOpen, '/is_furniture_door_open', self._handle_is_furniture_door_open_service)
 
         self._action_server_navigate = ActionServer(self, Navigate, '/robot/navigate', execute_callback=self._execute_navigate_callback, cancel_callback=self._cancel_callback)
         self._action_server_approach_obj = ActionServer(self, ApproachFurniture, '/robot/approach_furniture', execute_callback=self._execute_approach_furniture_callback, cancel_callback=self._cancel_callback)
@@ -215,7 +216,7 @@ class PyRobosimBridgePublic(Node):
             
             time.sleep(0.05)  # avoid busy loop
 
-    def _handle_is_door_open_service(self, request: IsDoorOpen.Request, response: IsDoorOpen.Response):
+    def _handle_is_passage_door_open_service(self, request: IsPassageDoorOpen.Request, response: IsPassageDoorOpen.Response):
 
         # Use the private node's synchronous helper that internally spins its context
         res, message = self._private_node.request_world_status(wait_timeout=2.0)
@@ -232,6 +233,27 @@ class PyRobosimBridgePublic(Node):
                 response.message = f"The selected hallway between {request.room1} and {request.room2} does not exist"
         else:
             response.door_open = False  # default/fallback
+            response.message = f"Internal error"
+        return response
+
+    def _handle_is_furniture_door_open_service(self, request:IsFurnitureOpen.Request, response:IsFurnitureOpen.Response):
+
+        # Use the private node's synchronous helper that internally spins its context
+        res, message = self._private_node.request_world_status(wait_timeout=2.0)
+
+        found = False
+        if res is not None:
+            for location in res.state.locations:  # list of locations/furniture info
+                if (location.name == request.furniture):
+                    response.is_open = location.is_open
+                    response.message = f""
+                    found = True
+                    break
+            if not found:
+                response.is_open = False  # default/fallback
+                response.message = f"The selected furniture {request.furniture} does not exist"
+        else:
+            response.is_open = False  # default/fallback
             response.message = f"Internal error"
         return response
     
